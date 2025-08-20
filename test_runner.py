@@ -53,32 +53,29 @@ Web application code:
 {app_code}
 """
     headers = {
-        "Authorization": f"Bearer {CLAUDE_API_KEY}",  # ✅ Correct header
+        "Authorization": f"Bearer {CLAUDE_API_KEY}",
         "anthropic-version": "2023-06-01",
         "Content-Type": "application/json"
     }
+
     payload = {
-        "model": "claude-3-5-sonnet-20240620",  # ✅ Stable model
+        "model": "claude-3-sonnet-20240229",  # stable model
         "max_tokens": 1500,
         "temperature": 0.2,
         "messages": [
-            {
-                "role": "user",
-                "content": prompt
-            }
+            {"role": "user", "content": prompt}
         ]
     }
 
     print("Calling Claude API to generate test cases...")
     resp = requests.post(CLAUDE_API_URL, headers=headers, json=payload)
 
-    # Debugging: print response on error
     if resp.status_code != 200:
         print("❌ API call failed:", resp.status_code, resp.text)
     resp.raise_for_status()
 
     data = resp.json()
-    return data.get("content", [])[0].get("text", "")
+    return data.get("completion", {}).get("content", "")
 
 # --- Parse markdown table into list of dicts ---
 def parse_test_cases_table(md_table: str):
@@ -144,10 +141,8 @@ def run_tests(test_cases):
                     if expected.lower() in page_source:
                         passed = True
                 else:
-                    # Default functional test
                     passed = True
             else:
-                # Non-functional test logic can be expanded
                 passed = True
 
         except Exception as e:
@@ -184,7 +179,7 @@ def main():
 
     updated_cases = run_tests(test_cases)
 
-    # ✅ Save results to Excel
+    # Save results to Excel
     wb = Workbook()
     ws = wb.active
     ws.title = "Test Results"
