@@ -1,4 +1,8 @@
 import os
+# --- Check CLAUDE_API_KEY ---
+key = os.getenv("CLAUDE_API_KEY")
+print("CLAUDE_API_KEY loaded:", bool(key))
+
 import time
 import json
 import threading
@@ -198,4 +202,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
